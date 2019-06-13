@@ -3,11 +3,6 @@
 import UIKit
 
 final class ___FILEBASENAME___: UIViewController {
-    private(set) lazy var baseView: ___VARIABLE_productName:identifier___View = {
-        let view = ___VARIABLE_productName:identifier___View()
-        return view
-    }()
-    
     let viewModel: ___VARIABLE_productName:identifier___ViewModelProtocol
     
     init(viewModel: ___VARIABLE_productName:identifier___ViewModelProtocol) {
@@ -20,11 +15,6 @@ final class ___FILEBASENAME___: UIViewController {
     }
     
     // MARK: - Life Cycle
-    override func loadView() {
-        super.loadView()
-        view = baseView
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
