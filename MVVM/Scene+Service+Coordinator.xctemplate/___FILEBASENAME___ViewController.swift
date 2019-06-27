@@ -18,10 +18,10 @@ final class ___FILEBASENAME___: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configBind()
+        setupBinds()
     }
     
-    private func configBind() {
-        //Config the binds to viewModel here
+    private func setupBinds() {
+        <#Setup the binds to viewModel here#>
     }
 }
