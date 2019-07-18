@@ -22,13 +22,15 @@ public protocol Coordinator: AnyObject {
 public extension Coordinator {
     
     /// Add a child coordinator to the parent
-    public func addChildCoordinator(_ childCoordinator: Coordinator) {
+    public func addChildCoordinator(_ childCoordinator: Coordinator) -&gt; Coordinator {
         self.childCoordinators.append(childCoordinator)
+        return childCoordinator
     }
     
     /// Remove a child coordinator from the parent
-    public func removeChildCoordinator(_ childCoordinator: Coordinator) {
+    public func removeChildCoordinator(_ childCoordinator: Coordinator) -&gt; Coordinator {
         self.childCoordinators = self.childCoordinators.filter { $0 !== childCoordinator }
+        return childCoordinator
     }
 }</string>
 	<key>IDECodeSnippetIdentifier</key>
@@ -44,6 +46,6 @@ public extension Coordinator {
 	<key>IDECodeSnippetUserSnippet</key>
 	<true/>
 	<key>IDECodeSnippetVersion</key>
-	<integer>0</integer>
+	<integer>2</integer>
 </dict>
 </plist>
