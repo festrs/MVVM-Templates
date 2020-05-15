@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionPrefix</key>
+	<string>stubbable</string>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>ClassImplementation</string>
+		<string>All</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>protocol Stubbable {
+    static func stub(withID id: String) -&gt; Self
+}
+
+extension Stubbable {
+    func setting&lt;T&gt;(_ keyPath: WritableKeyPath&lt;Self, T&gt;,
+                    to value: T) -&gt; Self {
+        var stub = self
+        stub[keyPath: keyPath] = value
+        return stub
+    }
+}
+
+extension Array where Element: Stubbable {
+    static func stub(withCount count: Int) -&gt; Array {
+        return (0..&lt;count).map {
+            .stub(withID: "\($0)")
+        }
+    }
+}
+
+extension MutableCollection where Element: Stubbable {
+    func setting&lt;T&gt;(_ keyPath: WritableKeyPath&lt;Element, T&gt;,
+                    to value: T) -&gt; Self {
+        var collection = self
+
+        for index in collection.indices {
+            let element = collection[index]
+            collection[index] = element.setting(keyPath, to: value)
+        }
+
+        return collection
+    }
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>60B520AF-A4BE-4D41-A4D7-06B651D9A9F5</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetSummary</key>
+	<string>Stubbable protocols to facilitate unit tests</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>Stubbable Protocols</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

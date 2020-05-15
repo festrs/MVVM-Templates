@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>TopLevel</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>extension CollectionType {
+    
+    public typealias ItemType = Self.Generator.Element
+    public typealias Grouper = (ItemType, ItemType) -&gt; Bool
+    
+    public func groupBy(grouper: Grouper) -&gt; [[ItemType]] {
+        var result : Array&lt;Array&lt;ItemType&gt;&gt; = []
+        
+        var previousItem: ItemType?
+        var group = [ItemType]()
+        
+        for item in self {
+            // Current item will be the next item
+            defer {previousItem = item}
+            
+            // Check if it's the first item
+            guard let previous = previousItem else {
+                group.append(item)
+                continue
+            }
+            
+            if grouper(previous, item) {
+                // Item in the same group
+                group.append(item)
+            } else {
+                // New group
+                result.append(group)
+                group = [ItemType]()
+                group.append(item)
+            }
+        }
+        
+        result.append(group)
+        
+        return result
+    }
+    
+}
+
+extension CollectionType where Self.Generator.Element: Groupable {
+    
+    public func group() -&gt; [[Self.Generator.Element]] {
+        return self.groupBy { $0.sameGroupAs($1) }
+    }
+    
+}
+
+extension CollectionType where Self.Generator.Element: Comparable {
+    
+    public func uniquelyGroupBy(grouper: (Self.Generator.Element, Self.Generator.Element) -&gt; Bool) -&gt; [[Self.Generator.Element]] {
+        let sorted = self.sort()
+        return sorted.groupBy(grouper)
+    }
+    
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>1177E4A6-F8EF-4417-832B-8EA929C9D664</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>GroupBy Swift 2</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

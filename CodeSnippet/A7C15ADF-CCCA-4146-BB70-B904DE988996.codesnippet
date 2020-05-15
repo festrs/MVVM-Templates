@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>CodeExpression</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>let url = urlBase + endPointAllProducts
+                let headers = [
+                    "x-access-token": JWT.encode(.HS256("SupperDupperSecret")) { builder in
+                        builder.expiration = NSDate().dateByAddingTimeInterval(7*24*60*60)
+                    }
+                ]
+                let iniIndex = result.value.rangeOfString("=")
+                let endIndex = result.value.rangeOfString("&amp;")
+                
+                if(iniIndex?.description != nil &amp;&amp; endIndex?.description != nil){
+                    let parameters = [
+                        "linkurl": result.value
+                    ]
+                    Alamofire.request(.POST, url, parameters: parameters, headers: headers)
+                        .responseJSON { response in
+                            switch response.result {
+                            case .Success:
+                                var json = [String:AnyObject]()
+                                do {
+                                    json = try NSJSONSerialization.JSONObjectWithData(response.data!, options: []) as! [String:AnyObject]
+                                } catch let error as NSError {
+                                    print(error)
+                                }
+                                let key = json["id"] as! String
+                                let predicate = NSPredicate(format: "remoteID = %@",key)
+                                self.mesAdded = json["mes"] as! String
+                                Sync.changes([json], inEntityNamed: "Document", predicate: predicate, dataStack: self.dataStack, completion: { (error) -&gt; Void in
+                                    if error != nil {
+                                        print(error)
+                                        self.hideLoadingHUD();
+                                    }else{
+                                        self.loadData()
+                                    }
+                                })
+                            case .Failure(let error):
+                                print(error)
+                                self.hideLoadingHUD();
+                            }
+                    }
+                }else{
+                    //TODO: qrcode not valid handler
+                    self.hideLoadingHUD();
+                }</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>A7C15ADF-CCCA-4146-BB70-B904DE988996</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>Example use sync and JWT</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

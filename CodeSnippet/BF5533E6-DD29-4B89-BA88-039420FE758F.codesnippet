@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>TopLevel</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>extension String
+{
+    func substringWithRange(start: Int, end: Int) -&gt; String
+    {
+        if (start &lt; 0 || start &gt; self.characters.count)
+        {
+            print("start index \(start) out of bounds")
+            return ""
+        }
+        else if end &lt; 0 || end &gt; self.characters.count
+        {
+            print("end index \(end) out of bounds")
+            return ""
+        }
+        let range = Range(start: self.startIndex.advancedBy(start), end: self.startIndex.advancedBy(end))
+        return self.substringWithRange(range)
+    }
+    
+    func substringWithRange(start: Int, location: Int) -&gt; String
+    {
+        if (start &lt; 0 || start &gt; self.characters.count)
+        {
+            print("start index \(start) out of bounds")
+            return ""
+        }
+        else if location &lt; 0 || start + location &gt; self.characters.count
+        {
+            print("end index \(start + location) out of bounds")
+            return ""
+        }
+        let range = Range(start: self.startIndex.advancedBy(start), end: self.startIndex.advancedBy(start + location))
+        return self.substringWithRange(range)
+    }
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>BF5533E6-DD29-4B89-BA88-039420FE758F</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>String extension</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

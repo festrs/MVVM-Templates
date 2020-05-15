@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionPrefix</key>
+	<string>cache</string>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>All</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>final class Cache&lt;Key: Hashable, Value&gt; {
+    private let wrapped = NSCache&lt;WrappedKey, Entry&gt;()
+    private let dateProvider: () -&gt; Date
+    private let entryLifetime: TimeInterval
+    private let keyTracker = KeyTracker()
+
+    init(dateProvider: @escaping () -&gt; Date = Date.init,
+         entryLifetime: TimeInterval = 12 * 60 * 60,
+         maximumEntryCount: Int = 50) {
+        self.dateProvider = dateProvider
+        self.entryLifetime = entryLifetime
+        wrapped.countLimit = maximumEntryCount
+        wrapped.delegate = keyTracker
+    }
+
+    func insert(_ value: Value, forKey key: Key) {
+        let date = dateProvider().addingTimeInterval(entryLifetime)
+        let entry = Entry(key: key, value: value, expirationDate: date)
+        wrapped.setObject(entry, forKey: WrappedKey(key))
+        keyTracker.keys.insert(key)
+    }
+
+    func value(forKey key: Key) -&gt; Value? {
+        guard let entry = wrapped.object(forKey: WrappedKey(key)) else {
+            return nil
+        }
+
+        guard dateProvider() &lt; entry.expirationDate else {
+            // Discard values that have expired
+            removeValue(forKey: key)
+            return nil
+        }
+
+        return entry.value
+    }
+
+    func removeValue(forKey key: Key) {
+        wrapped.removeObject(forKey: WrappedKey(key))
+    }
+}
+
+private extension Cache {
+    final class Entry {
+        let key: Key
+        let value: Value
+        let expirationDate: Date
+
+        init(key: Key, value: Value, expirationDate: Date) {
+            self.key = key
+            self.value = value
+            self.expirationDate = expirationDate
+        }
+    }
+}
+
+private extension Cache {
+    final class KeyTracker: NSObject, NSCacheDelegate {
+        var keys = Set&lt;Key&gt;()
+
+        func cache(_ cache: NSCache&lt;AnyObject, AnyObject&gt;,
+                   willEvictObject object: Any) {
+            guard let entry = object as? Entry else {
+                return
+            }
+
+            keys.remove(entry.key)
+        }
+    }
+}
+
+extension Cache.Entry: Codable where Key: Codable, Value: Codable {
+    func saveToDisk(
+        as name: String,
+        at folderURL: URL = FileManager.default.temporaryDirectory
+        ) throws {
+        let fileURL = folderURL.appendingPathComponent(name + ".cache")
+        let data = try JSONEncoder().encode(self)
+        try data.write(to: fileURL)
+    }
+}
+
+private extension Cache {
+    final class WrappedKey: NSObject {
+        let key: Key
+
+        init(_ key: Key) { self.key = key }
+
+        override var hash: Int { return key.hashValue }
+
+        override func isEqual(_ object: Any?) -&gt; Bool {
+            guard let value = object as? WrappedKey else {
+                return false
+            }
+
+            return value.key == key
+        }
+    }
+}
+
+extension Cache: Codable where Key: Codable, Value: Codable {
+    convenience init(from decoder: Decoder) throws {
+        self.init()
+
+        let container = try decoder.singleValueContainer()
+        let entries = try container.decode([Entry].self)
+        entries.forEach(insert)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(keyTracker.keys.compactMap(entry))
+    }
+}
+
+private extension Cache {
+    func entry(forKey key: Key) -&gt; Entry? {
+        guard let entry = wrapped.object(forKey: WrappedKey(key)) else {
+            return nil
+        }
+
+        guard dateProvider() &lt; entry.expirationDate else {
+            removeValue(forKey: key)
+            return nil
+        }
+
+        return entry
+    }
+
+    func insert(_ entry: Entry) {
+        wrapped.setObject(entry, forKey: WrappedKey(entry.key))
+        keyTracker.keys.insert(entry.key)
+    }
+}
+
+extension Cache {
+    subscript(key: Key) -&gt; Value? {
+        get { return value(forKey: key) }
+        set {
+            guard let value = newValue else {
+                // If nil was assigned using our subscript,
+                // then we remove any value for that key:
+                removeValue(forKey: key)
+                return
+            }
+
+            insert(value, forKey: key)
+        }
+    }
+}</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>4060A7DE-5F14-4163-BFAF-6EA45DD98856</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Generic</string>
+	<key>IDECodeSnippetSummary</key>
+	<string>cache object to save and cache other objects</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>Cache object</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>

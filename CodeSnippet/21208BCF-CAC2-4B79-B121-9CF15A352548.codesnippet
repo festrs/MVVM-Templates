@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDECodeSnippetCompletionScopes</key>
+	<array>
+		<string>CodeBlock</string>
+	</array>
+	<key>IDECodeSnippetContents</key>
+	<string>struct User {
+                let name: String
+                let likes: [String]
+            }
+            
+            let users = [
+                User(name: "Julius",    likes: [ "Programming", "Snow", "Whiskey", "Cats" ]),
+                User(name: "Stephanie", likes: [ "Video Games", "Horseback Riding", "Cats", "Orange Juice" ]),
+                User(name: "Bill",      likes: [ "Pencils", "Summer", "Cats", "Horseback Riding" ]),
+                User(name: "Melanie",   likes: [ "Watches", "Cats", "Programming", "Writing" ])
+            ]
+
+            let uniqueLikes: NSSet = (users.flatMap({ u in u.likes })).reduce(NSSet()) {
+                set, like in
+                return set.setByAddingObject(like)
+            }</string>
+	<key>IDECodeSnippetIdentifier</key>
+	<string>21208BCF-CAC2-4B79-B121-9CF15A352548</string>
+	<key>IDECodeSnippetLanguage</key>
+	<string>Xcode.SourceCodeLanguage.Swift</string>
+	<key>IDECodeSnippetTitle</key>
+	<string>Reduce,FlatMap Example</string>
+	<key>IDECodeSnippetUserSnippet</key>
+	<true/>
+	<key>IDECodeSnippetVersion</key>
+	<integer>2</integer>
+</dict>
+</plist>
